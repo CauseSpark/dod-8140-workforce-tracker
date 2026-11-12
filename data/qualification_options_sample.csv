@@ -1,0 +1,12 @@
+dcwf_code,proficiency_level,qualification_type,qualification_name,note
+511,Basic,Certification,CompTIA Security+,ILLUSTRATIVE SAMPLE - verify against official DoD 8140 Matrix V2.1
+511,Intermediate,Certification,CompTIA CySA+,ILLUSTRATIVE SAMPLE - verify against official DoD 8140 Matrix V2.1
+511,Advanced,Certification,GIAC GCIA,ILLUSTRATIVE SAMPLE - verify against official DoD 8140 Matrix V2.1
+521,Basic,Certification,CompTIA Security+,ILLUSTRATIVE SAMPLE - verify against official DoD 8140 Matrix V2.1
+531,Intermediate,Certification,GIAC GCIH,ILLUSTRATIVE SAMPLE - verify against official DoD 8140 Matrix V2.1
+531,Intermediate,Education,Bachelor's degree in a listed cyber discipline,ILLUSTRATIVE SAMPLE - verify against official DoD 8140 Matrix V2.1
+531,Advanced,Certification,GIAC GCFA,ILLUSTRATIVE SAMPLE - verify against official DoD 8140 Matrix V2.1
+541,Basic,Certification,CompTIA PenTest+,ILLUSTRATIVE SAMPLE - verify against official DoD 8140 Matrix V2.1
+612,Intermediate,Certification,ISC2 CISSP,ILLUSTRATIVE SAMPLE - verify against official DoD 8140 Matrix V2.1
+722,Advanced,Certification,ISACA CISM,ILLUSTRATIVE SAMPLE - verify against official DoD 8140 Matrix V2.1
+722,Advanced,Certification,ISC2 CISSP,ILLUSTRATIVE SAMPLE - verify against official DoD 8140 Matrix V2.1
