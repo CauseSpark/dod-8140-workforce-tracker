@@ -1,0 +1,10 @@
+employee_id,name,team,dcwf_code,proficiency_level,qualification_type,qualification_name,earned_date,expiration_date,residential_qualified
+HCS-001,Avery Quill,SOC,511,Intermediate,Certification,CompTIA CySA+,2023-12-01,2026-12-01,Y
+HCS-001,Avery Quill,SOC,511,Intermediate,Certification,CompTIA Security+,2023-02-01,2026-02-01,Y
+HCS-002,Blake Thornfield,Incident Response,531,Advanced,Certification,GIAC GCFA,2023-01-05,2027-01-05,Y
+HCS-003,Casey Marrow,Vulnerability Mgmt,541,Basic,Certification,CompTIA PenTest+,2024-01-25,2027-01-25,N
+HCS-004,Dana Wexley,Assessment & Authorization,612,Intermediate,Certification,ISC2 CISSP,2024-06-30,2027-06-30,Y
+HCS-005,Emery Faircloth,Security Management,722,Advanced,Certification,ISACA CISM,2022-10-31,2025-10-31,Y
+HCS-006,Finley Ostrander,Infrastructure,521,Basic,,,,,N
+HCS-007,Gray Holloway,SOC,511,Advanced,Certification,CompTIA Security+,2024-09-15,2027-09-15,Y
+HCS-008,Harper Lindqvist,Incident Response,531,Intermediate,Education,Bachelor's degree in a listed cyber discipline,2021-05-15,,Y
