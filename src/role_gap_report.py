@@ -17,22 +17,11 @@ Usage:
 
 from __future__ import annotations
 
-import argparse
-import csv
 import sys
-from collections import OrderedDict
 from dataclasses import asdict, dataclass, field
 from datetime import date
-from pathlib import Path
 
-from src.common import (
-    OPTIONS_PATH,
-    ROLES_PATH,
-    TRACKER_PATH,
-    parse_date,
-    proficiency_rank,
-    read_csv,
-)
+from src.common import OPTIONS_PATH, ROLES_PATH, parse_date, proficiency_rank, read_csv, report_parser, write_csv
 
 
 @dataclass
@@ -80,7 +69,7 @@ def evaluate(
     role_names = {r["dcwf_code"]: r["work_role_name"] for r in roles}
     index = build_option_index(options)
 
-    people: "OrderedDict[str, list[dict[str, str]]]" = OrderedDict()
+    people: dict[str, list[dict[str, str]]] = {}   # employee -> their rows, in tracker order
     for row in tracker:
         people.setdefault(row["employee_id"], []).append(row)
 
@@ -156,28 +145,14 @@ def format_report(results: list[PersonStatus], as_of: date) -> str:
     return "\n".join(lines)
 
 
-def write_csv(results: list[PersonStatus], path: str | Path) -> None:
-    path = Path(path)
-    path.parent.mkdir(parents=True, exist_ok=True)
-    fields = list(PersonStatus.__dataclass_fields__) + ["fully_qualified"]
-    with open(path, "w", newline="", encoding="utf-8") as fh:
-        writer = csv.DictWriter(fh, fieldnames=fields)
-        writer.writeheader()
-        for s in results:
-            row = asdict(s)
-            row["gaps"] = "; ".join(s.gaps)
-            row["fully_qualified"] = s.fully_qualified
-            writer.writerow(row)
+def csv_rows(results: list[PersonStatus]) -> list[dict]:
+    return [{**asdict(s), "gaps": "; ".join(s.gaps), "fully_qualified": s.fully_qualified} for s in results]
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--tracker", default=TRACKER_PATH)
+    parser = report_parser(__doc__, "Exit 1 if anyone has a gap")
     parser.add_argument("--roles", default=ROLES_PATH)
     parser.add_argument("--options", default=OPTIONS_PATH)
-    parser.add_argument("--as-of", type=date.fromisoformat, default=date.today())
-    parser.add_argument("--csv", help="Optional path to also write results as CSV")
-    parser.add_argument("--strict", action="store_true", help="Exit 1 if anyone has a gap")
     args = parser.parse_args(argv)
 
     results = evaluate(
@@ -185,7 +160,7 @@ def main(argv: list[str] | None = None) -> int:
     )
     print(format_report(results, args.as_of))
     if args.csv:
-        write_csv(results, args.csv)
+        write_csv(args.csv, list(PersonStatus.__dataclass_fields__) + ["fully_qualified"], csv_rows(results))
     if args.strict and not all(s.fully_qualified for s in results):
         return 1
     return 0

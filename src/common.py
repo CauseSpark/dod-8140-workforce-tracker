@@ -1,7 +1,8 @@
-"""Shared helpers: file paths, CSV loading, and date parsing."""
+"""Shared helpers: file paths, CSV reading and writing, date parsing, and common CLI options."""
 
 from __future__ import annotations
 
+import argparse
 import csv
 from datetime import date
 from pathlib import Path
@@ -22,6 +23,26 @@ def read_csv(path: str | Path) -> list[dict[str, str]]:
             {k.strip(): (v or "").strip() for k, v in row.items()}
             for row in csv.DictReader(fh)
         ]
+
+
+def write_csv(path: str | Path, fieldnames: list[str], rows: list[dict]) -> None:
+    """Write dict rows to a CSV, creating the parent folder if needed."""
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with open(path, "w", newline="", encoding="utf-8") as fh:
+        writer = csv.DictWriter(fh, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(rows)
+
+
+def report_parser(description: str, strict_help: str) -> argparse.ArgumentParser:
+    """Parser with the options both reports share: --tracker, --as-of, --csv, --strict."""
+    parser = argparse.ArgumentParser(description=description, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument("--tracker", default=TRACKER_PATH, help="Path to workforce tracker CSV")
+    parser.add_argument("--as-of", type=date.fromisoformat, default=date.today(), help="Date to check against (YYYY-MM-DD)")
+    parser.add_argument("--csv", help="Optional path to also write results as CSV")
+    parser.add_argument("--strict", action="store_true", help=strict_help)
+    return parser
 
 
 def parse_date(value: str | None) -> date | None:

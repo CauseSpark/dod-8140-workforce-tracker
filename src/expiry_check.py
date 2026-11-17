@@ -8,14 +8,11 @@ Usage:
 
 from __future__ import annotations
 
-import argparse
-import csv
 import sys
 from dataclasses import asdict, dataclass
 from datetime import date
-from pathlib import Path
 
-from src.common import TRACKER_PATH, parse_date, read_csv
+from src.common import parse_date, read_csv, report_parser, write_csv
 
 WINDOWS = (30, 60, 90)
 
@@ -93,28 +90,13 @@ def format_table(flags: list[ExpiryFlag], as_of: date) -> str:
     return "\n".join(lines)
 
 
-def write_csv(flags: list[ExpiryFlag], path: str | Path) -> None:
-    path = Path(path)
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with open(path, "w", newline="", encoding="utf-8") as fh:
-        writer = csv.DictWriter(fh, fieldnames=list(ExpiryFlag.__dataclass_fields__))
-        writer.writeheader()
-        for f in flags:
-            writer.writerow(asdict(f))
-
-
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--tracker", default=TRACKER_PATH, help="Path to workforce tracker CSV")
-    parser.add_argument("--as-of", type=date.fromisoformat, default=date.today(), help="Date to check against (YYYY-MM-DD)")
-    parser.add_argument("--csv", help="Optional path to also write results as CSV")
-    parser.add_argument("--strict", action="store_true", help="Exit 1 if any certification is already expired")
-    args = parser.parse_args(argv)
+    args = report_parser(__doc__, "Exit 1 if any certification is already expired").parse_args(argv)
 
     flags = check_expirations(read_csv(args.tracker), args.as_of)
     print(format_table(flags, args.as_of))
     if args.csv:
-        write_csv(flags, args.csv)
+        write_csv(args.csv, list(ExpiryFlag.__dataclass_fields__), [asdict(f) for f in flags])
     if args.strict and any(f.bucket == "EXPIRED" for f in flags):
         return 1
     return 0
